@@ -1,13 +1,13 @@
 # 4202_problemset2
-Installation:
-pip install opencv-python
-pip install matplotlib
-pip install numpy
+## Installation:
+__pip install opencv-python__
+__pip install matplotlib__
+__pip install numpy__
 
 # How to use:
-Part A:
-Run with the following command:
-python parta.py --imageset "{imageset}"
+## Part A:
+Run with the following command:  
+__python parta.py --imageset "{imageset}"__  
 
 Replace {imageset} with either One or Two, depending on the image set you'd like to you (ie. "Calibration - One" or "Calibration - Two")
 
