@@ -13,7 +13,7 @@ class Card:
         self.corner_pts = []
         self.center = 0
 
-def thresh(img, BKG_THRESH):
+def preprocess(img, BKG_THRESH=40, canny_thresh=50, dilation=5):
 
     # Start Processing Images
     blur = cv.GaussianBlur(img,(5,5),0)
@@ -21,10 +21,13 @@ def thresh(img, BKG_THRESH):
     img_w, img_h = np.shape(img)[:2]
     bkg_level = img[int(img_h/100)][int(img_w/2)]
     thresh_level = bkg_level + BKG_THRESH
+    dilate_kernel = cv.getStructuringElement(cv.MORPH_RECT,(dilation,dilation))
 
     retval, thresh = cv.threshold(blur,thresh_level,255,cv.THRESH_BINARY)
+    edges = cv.Canny(thresh, canny_thresh, 0.4*canny_thresh)
+    dilated = cv.dilate(edges, dilate_kernel, iterations = 1)
     
-    return thresh
+    return thresh, edges, dilated
 
 def find_cards(thresh_img):
 
@@ -92,6 +95,7 @@ def preprocess_card(contour, image):
 
 def bound(img, thresh_img):
 
+    bound = img
     # Find and sort the contours of all cards in the image (query cards)
     cnts_sort, cnt_is_card = find_cards(thresh_img)
 
@@ -108,7 +112,7 @@ def bound(img, thresh_img):
             if (cnt_is_card[i] == 1):
 
                 # Create a card object from the contour and append it to the list of cards.
-                cards.append(preprocess_card(cnts_sort[i],img))
+                cards.append(preprocess_card(cnts_sort[i],bound))
 	    
         # Draw card contours on image (have to do contours all at once or
         # they do not show up properly for some reason)
@@ -116,7 +120,10 @@ def bound(img, thresh_img):
             temp_cnts = []
             for i in range(len(cards)):
                 temp_cnts.append(cards[i].contour)
-            cv.drawContours(img,temp_cnts, -1, (0,0,255), 2)
-
-        cv.imshow("Card Detector",img)
-        cv.waitKey(500)
+                # for j in range(4):
+                #     pt1 = tuple(cards[i].corner_pts[j-1][0])
+                #     pt2 = tuple(cards[i].corner_pts[j][0])
+                #     cv.line(bound, pt1, pt2, (255, 0, 0), 2)
+            cv.drawContours(bound,temp_cnts, -1, (0,0,255), 2)
+        
+    return bound

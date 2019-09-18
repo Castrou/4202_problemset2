@@ -1,4 +1,5 @@
 import cardDetect
+from calibrate import calibrateCamera as calibrate
 import numpy as np
 import matplotlib.pyplot as plt
 import argparse
@@ -7,31 +8,75 @@ import glob
 
 # Argument parsing
 ap = argparse.ArgumentParser()
-ap.add_argument("-bg", "--bgthresh", help = "threshold value for background")
-ap.add_argument("-i", "--image", help = "'One' or 'Two'")
+ap.add_argument("-i", "--imageset", help = "'Basic', 'Skillful' or 'Advanced'")
 args = vars(ap.parse_args())
 
-# Image path setup
-img = cv.imread(args["image"])
-BKG_THRESH = int(args["bgthresh"])
-images = glob.glob('./Basic/*.png')
+# Imagesetup
+imageset = args["imageset"]
+
+if imageset == "Basic":
+    images = glob.glob('./Basic/*.png')
+    calibset = './Calibration - Two/'
+elif imageset == "Skillful":
+    images = glob.glob('./Skillful/*.png')
+    calibset = './Calibration - One/'
+elif imageset == "Advanced":
+    images = glob.glob('./Advanced - Set 2/*.png')
+    calibset = './Calibration - Three/'
+else:
+    print("pick an actual imageset pls")
+
+ret, mtx, dist, rvecs, tvecs, objpoints, imgpoints = calibrate(calibset)
+
+# Parameters
+BKG_THRESH = 40
+canny_thresh = 5
+dilation = 10
 
 # Loop through
 pos = 1
 for fname in images:
+
+    # Select image
     img = cv.imread(fname)
+    w, h = img.shape[0], img.shape[1]
+
+    # # Undistort
+    # newcameramtx, roi=cv.getOptimalNewCameraMatrix(mtx,dist,(w,h),1,(w,h))
+    # img = cv.undistort(img, mtx, dist, None, newcameramtx)
+
+    # Colour setup
+    img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
     gray = cv.cvtColor(img,cv.COLOR_BGR2GRAY)
 
     # Process Image
-    thresh = cardDetect.thresh(gray, BKG_THRESH)
+    thresh, edges, dilated = cardDetect.preprocess(gray, BKG_THRESH, canny_thresh, dilation)
+    segmented = thresh - edges
+    bound = cardDetect.bound(img, segmented)
     
-    bound = cardDetect.bound(img, thresh)
+    # Prep results for plotting
+    bound = cv.cvtColor(bound, cv.COLOR_BGR2RGB)
+    bound = cv.resize(bound, (0, 0), None, .5, .5)
+    edges = cv.cvtColor(edges, cv.COLOR_GRAY2BGR)
+    edges = cv.resize(edges, (0, 0), None, .5, .5)
+    
+    # Plot
+    final_frame = cv.hconcat([bound, edges])
+    cv.imshow("yeet", final_frame)
+    cv.waitKey(500)
 
 # Plot
-# plt.subplot(231),plt.imshow(img,cmap = 'gray')
-# plt.title('Original Image'), plt.xticks([]), plt.yticks([])
-# plt.subplot(232),plt.imshow(thresh,cmap = 'gray')
-# plt.title('Threshold'), plt.xticks([]), plt.yticks([])
-# plt.subplot(233),plt.imshow(bound,cmap = 'gray')
-# plt.title('Boundary Box'), plt.xticks([]), plt.yticks([])
-# plt.show()
+plt.subplot(231),plt.imshow(img,cmap = 'gray')
+plt.title('Original Image'), plt.xticks([]), plt.yticks([])
+plt.subplot(232),plt.imshow(thresh,cmap = 'gray')
+plt.title('Threshold'), plt.xticks([]), plt.yticks([])
+plt.subplot(233),plt.imshow(edges,cmap = 'gray')
+plt.title('Edges'), plt.xticks([]), plt.yticks([])
+plt.subplot(234),plt.imshow(dilated,cmap = 'gray')
+plt.title('Dilated'), plt.xticks([]), plt.yticks([])
+plt.subplot(235),plt.imshow(segmented,cmap = 'gray')
+plt.title('Segmented'), plt.xticks([]), plt.yticks([])
+plt.subplot(236),plt.imshow(bound,cmap = 'gray')
+plt.title('Boundary Box'), plt.xticks([]), plt.yticks([])
+plt.show()
+# plt.close()
