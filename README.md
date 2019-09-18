@@ -15,9 +15,11 @@ The intrinsic values resulting from calibration will be printed, and a topdown p
 
 ## Part B:
 Run with the following command: 
-_python partb.py --imageset {imageset}_
+_python partb.py --imageset {imageset} --mindist {bool}_
 
 Replace {imageset} with either "Basic", "Skillful" or "Advanced"  
+Replace {bool} with either True or False  
 This will print the boundaries around cards and the detected edges for each image in the set  
+Setting mindist to True will print the minimum distances between them (this is much slower)
 
 NOTE: Currently, only "Basic" has full functionality

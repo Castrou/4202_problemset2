@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import cv2 as cv
 
 CARD_MAX_AREA = 130000
-CARD_MIN_AREA = 10000
+CARD_MIN_AREA = 12000
 
 class Card:
     """ Information about card """
@@ -12,6 +12,22 @@ class Card:
         self.width, self.height = 0,0
         self.corner_pts = []
         self.center = 0
+        self.id = 0
+
+def minDistance(contour, contourOther):
+    distanceMin = 99999999
+    pos = 0
+    for point1 in contour:
+        for point2 in contourOther:
+            distance = 0
+            xA, yA = point1[0][0], point1[0][1]
+            xB, yB = point2[0][0], point2[0][1]
+            distance = ((xB-xA)**2+(yB-yA)**2)**(1/2) # distance formula
+            if (distance < distanceMin):
+                distanceMin = distance
+                xAmin, yAmin, xBmin, yBmin  = xA, yA, xB, yB
+        pos += 1
+    return distanceMin, (xAmin, yAmin), (xBmin, yBmin)
 
 def preprocess(img, BKG_THRESH=40, canny_thresh=50, dilation=5):
 
@@ -120,10 +136,11 @@ def bound(img, thresh_img):
             temp_cnts = []
             for i in range(len(cards)):
                 temp_cnts.append(cards[i].contour)
+                cards[i].id = i
                 # for j in range(4):
                 #     pt1 = tuple(cards[i].corner_pts[j-1][0])
                 #     pt2 = tuple(cards[i].corner_pts[j][0])
                 #     cv.line(bound, pt1, pt2, (255, 0, 0), 2)
-            cv.drawContours(bound,temp_cnts, -1, (0,0,255), 2)
+            cv.drawContours(bound,temp_cnts, -1, (255,0,0), 2)
         
-    return bound
+    return bound, cards
