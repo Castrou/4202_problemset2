@@ -24,3 +24,4 @@ This will print the boundaries around cards and the detected edges for each imag
 Setting mindist to True will print the minimum distances between them (this is much slower)
 
 NOTE: Currently, only "Basic" has full functionality
+NOTE: If you need to clear results to check if it writes to a file DO NOT delete the folder. Delete the files within the folder instead.

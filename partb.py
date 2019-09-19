@@ -62,8 +62,8 @@ for fname in images:
 
     # Process Image
     thresh, edges, dilated = cardDetect.preprocess(gray, BKG_THRESH, canny_thresh, dilation)
-    segmented = thresh - edges
-    bound, cards = cardDetect.bound(img, segmented)
+    # segmented = thresh - edges
+    bound, cards = cardDetect.bound(img, thresh)
     
     # Save and print results
     print(f'Image {pos}:')
@@ -88,5 +88,3 @@ for fname in images:
     final_frame = cv.hconcat([bound, edges])
     cv.imshow("yeet", final_frame)
     cv.waitKey(1000)
-
-    pos += 1

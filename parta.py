@@ -14,7 +14,8 @@ imageset = f'./Calibration - {args["imageset"]}/'
 disp = int(args["display"])
 
 # Calibrate Camera
-ret, mtx, dist, rvecs, tvecs, objpoints, imgpoints = calibrate(imageset) # Calibrate camera
+pattern_size = (8,6)
+ret, mtx, dist, rvecs, tvecs, objpoints, imgpoints = calibrate(imageset, pattern_size) # Calibrate camera
 print("focal length (x) = "+str(mtx[0][0]))
 print("focal length (y) = "+str(mtx[1][1]))
 print("x offset from center = " + str(mtx[0][2]))
@@ -35,7 +36,7 @@ for fname in warpImg:
 
     # Transform
     try:
-        src, dst = tform.get_points(img, (8,6))
+        src, dst = tform.get_points(img, pattern_size)
         warped, M = tform.warp(img, src, dst, disp)
         cv.imwrite(f'./Top Down - {args["imageset"]}/warped_{fname[len(imageset):]}', warped)
         print(f"warped_{fname[len(imageset):]}")
