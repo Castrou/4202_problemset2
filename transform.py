@@ -37,5 +37,5 @@ def warp(img, src, dst, testing=False):
         ax2.imshow(cv2.flip(warped, 1))
         ax2.set_title('Warped Image', fontsize=30)
         plt.show()
-    else:
-        return warped, M
+    
+    return warped, M

@@ -29,6 +29,22 @@ def minDistance(contour, contourOther):
         pos += 1
     return distanceMin, (xAmin, yAmin), (xBmin, yBmin)
 
+def get_theta(qCard):
+    # print(qCard.corner_pts[0][0])
+    hyp = 9999999
+    # [xB, yB], [xA, yA] = qCard.corner_pts[0][0], qCard.corner_pts[1][0]
+    xA, yA = qCard.center
+    for point in qCard.contour:
+        xB, yB = point[0][0], point[0][1]
+        distance = ((xB-xA)**2+(yB-yA)**2)**(1/2)
+        if (distance < hyp):
+            hyp = distance
+            xlineB, xlineA = xB, xA
+    xline = abs(xlineB-xlineA)
+    theta = np.arccos(xline/hyp)
+    theta = theta*180 / np.pi
+    return theta
+
 def preprocess(img, BKG_THRESH=40, canny_thresh=50, dilation=5):
 
     # Start Processing Images

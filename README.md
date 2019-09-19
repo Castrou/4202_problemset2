@@ -7,11 +7,12 @@ _pip install numpy_
 # How to use:
 ## Part A:
 Run with the following command:  
-_python parta.py --imageset {imageset}_
+_python parta.py --imageset {imageset} --display {disp}_  
 
 Replace {imageset} with either "One", "Two" or "Three", depending on the image set you'd like to you (ie. "Calibration - One" or "Calibration - Two")
+Replace {disp} with either 1 to display output, or 0 to only write output to a file.
 
-The intrinsic values resulting from calibration will be printed, and a topdown perspective of the imageset will be created in either "Top Down - One" or "Top Down - Two" depending on the imageset chosen
+The intrinsic values resulting from calibration will be printed, and a topdown perspective of the imageset will be created in either "Top Down - One", "Top Down - Two" or "Top Down - Three" depending on the imageset chosen
 
 ## Part B:
 Run with the following command: 

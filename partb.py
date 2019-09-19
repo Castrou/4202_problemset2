@@ -6,9 +6,20 @@ import argparse
 import cv2 as cv
 import glob
 
+def str2bool(v):
+    if isinstance(v, bool):
+       return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
 # Argument parsing
 ap = argparse.ArgumentParser()
 ap.add_argument("-i", "--imageset", help = "'Basic', 'Skillful' or 'Advanced'")
+ap.add_argument("-d", "--mindist", help = "Prints the minimum distance between cards")
 args = vars(ap.parse_args())
 
 # Imagesetup
@@ -26,7 +37,7 @@ elif imageset == "Advanced":
 else:
     print("pick an actual imageset pls")
 
-ret, mtx, dist, rvecs, tvecs, objpoints, imgpoints = calibrate(calibset)
+# ret, mtx, dist, rvecs, tvecs, objpoints, imgpoints = calibrate(calibset)
 
 # Parameters
 BKG_THRESH = 40
@@ -57,10 +68,15 @@ for fname in images:
     # Save and print results
     print(f'Image {pos}:')
     for i in range(len(cards)):
-        minDist, pt1, pt2 = cardDetect.minDistance(cards[i].contour, cards[i-1].contour)
-        cv.line(bound, pt1, pt2, (0, 0, 255), 2)
-        print(f'Card {cards[i].id+1}: Pos = {cards[i].center}')
-        print(f'Minimum distance from card {cards[i].id+1} to card {cards[i-1].id+1}: {minDist}')
+        theta = cardDetect.get_theta(cards[i])
+        centerx = cards[i].center[0] - (w/2)
+        centery = -(cards[i].center[1] - (h/2))
+        print(f'Card {cards[i].id+1}: Pos = ({centerx}, {centery}) Theta = {theta}')
+        # cv.line(bound, cards[i].center, , (0, 0, 255), 2)
+        if str2bool(args["mindist"]):
+            minDist, pt1, pt2 = cardDetect.minDistance(cards[i].contour, cards[i-1].contour)
+            print(f'Minimum distance from card {cards[i].id+1} to card {cards[i-1].id+1}: {minDist}')
+            cv.line(bound, pt1, pt2, (0, 0, 255), 2)
 
     # Prep results for plotting
     bound = cv.cvtColor(bound, cv.COLOR_BGR2RGB)
@@ -74,18 +90,3 @@ for fname in images:
     cv.waitKey(1000)
 
     pos += 1
-
-# Plot
-# plt.subplot(231),plt.imshow(img,cmap = 'gray')
-# plt.title('Original Image'), plt.xticks([]), plt.yticks([])
-# plt.subplot(232),plt.imshow(thresh,cmap = 'gray')
-# plt.title('Threshold'), plt.xticks([]), plt.yticks([])
-# plt.subplot(233),plt.imshow(edges,cmap = 'gray')
-# plt.title('Edges'), plt.xticks([]), plt.yticks([])
-# plt.subplot(234),plt.imshow(dilated,cmap = 'gray')
-# plt.title('Dilated'), plt.xticks([]), plt.yticks([])
-# plt.subplot(235),plt.imshow(segmented,cmap = 'gray')
-# plt.title('Segmented'), plt.xticks([]), plt.yticks([])
-# plt.subplot(236),plt.imshow(bound,cmap = 'gray')
-# plt.title('Boundary Box'), plt.xticks([]), plt.yticks([])
-# plt.show()
