@@ -128,7 +128,7 @@ def preprocess_card(contour, image):
 def bound(img, thresh_img):
 
     bound = img
-    # Find and sort the contours of all cards in the image (query cards)
+    # Find and sort the contours of all cards in the image
     cnts_sort, cnt_is_card = find_cards(thresh_img)
 
     # If there are no contours, do nothing
@@ -139,15 +139,13 @@ def bound(img, thresh_img):
         cards = []
         k = 0
 
-        # For each contour detected:
+        # For each contour detected create a card object from the contour and 
+        # append it to the list of cards.:
         for i in range(len(cnts_sort)):
             if (cnt_is_card[i] == 1):
-
-                # Create a card object from the contour and append it to the list of cards.
                 cards.append(preprocess_card(cnts_sort[i],bound))
 	    
-        # Draw card contours on image (have to do contours all at once or
-        # they do not show up properly for some reason)
+        # Draw card contours on image
         if (len(cards) != 0):
             temp_cnts = []
             for i in range(len(cards)):

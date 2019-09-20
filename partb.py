@@ -67,6 +67,7 @@ for fname in images:
     
     # Save and print results
     print(f'Image {pos}:')
+    print(f"# cards = {len(cards)}")
     for i in range(len(cards)):
         theta = cardDetect.get_theta(cards[i])
         centerx = cards[i].center[0] - (w/2)
@@ -87,4 +88,5 @@ for fname in images:
     # Plot
     final_frame = cv.hconcat([bound, edges])
     cv.imshow("yeet", final_frame)
-    cv.waitKey(1000)
+    cv.waitKey(500)
+    pos += 1
