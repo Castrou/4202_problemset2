@@ -12,7 +12,7 @@ _python parta.py --imageset {imageset} --showcalib {sc} --showwarp {sw}_
 
 Replace {imageset} with either "One", "Two" or "Three", depending on the image set you'd like to you (ie. "Calibration - One", "Calibration - Two", "Calibration - Three")
 Replace {sc} with either 1 to display the calibrated chessboard corners.
-Replace {sw} with either 1 to display the warped image compared to original.
+Replace {sw} with either 1 to display the warped image compared to original (does not automatically cycle through).
 
 The intrinsic values resulting from calibration will be printed, and a topdown perspective of the imageset will be created in either "Top Down - One", "Top Down - Two" or "Top Down - Three" depending on the imageset chosen
 
