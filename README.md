@@ -8,7 +8,7 @@ _git clone https://github.com/Castrou/4202_problemset2_
 # How to use:
 ## Part A:
 Run with the following command:  
-_python parta.py --imageset {imageset} --showcalib {sc} --showwarp {sw} 
+_python parta.py --imageset {imageset} --showcalib {sc} --showwarp {sw}_
 
 Replace {imageset} with either "One", "Two" or "Three", depending on the image set you'd like to you (ie. "Calibration - One", "Calibration - Two", "Calibration - Three")
 Replace {sc} with either 1 to display the calibrated chessboard corners.
